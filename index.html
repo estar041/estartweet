@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EstarTweet</title>
+    <link href="./src/output.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased min-h-screen">
+    
+    <!-- Navigation Bar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <!-- Logo & Brand -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer group">
+                    <svg class="h-8 w-8 text-blue-500 transform transition-transform group-hover:scale-110 group-hover:rotate-12" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                    </svg>
+                    <span class="ml-2 font-bold text-xl tracking-tight text-blue-600 dark:text-blue-400">EstarTweet</span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden sm:flex sm:items-center sm:space-x-8">
+                    <a href="#" class="text-gray-900 border-b-2 border-blue-500 dark:text-white px-3 py-2 text-sm font-medium transition-colors">홈</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 text-sm font-medium transition-colors border-b-2 border-transparent hover:border-gray-300">탐색</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 text-sm font-medium transition-colors border-b-2 border-transparent hover:border-gray-300">알림</a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 text-sm font-medium transition-colors border-b-2 border-transparent hover:border-gray-300">메시지</a>
+                    
+                    <!-- Profile Dropdown (visual only) -->
+                    <div class="ml-3 relative">
+                        <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold cursor-pointer hover:ring-2 hover:ring-offset-2 hover:ring-blue-500 ring-offset-white dark:ring-offset-gray-800 transition-all shadow-sm">
+                            U
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex gap-8">
+        
+        <!-- Left Sidebar (Trending/Suggested) -->
+        <aside class="hidden lg:block w-1/4">
+            <div class="sticky top-24 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 transition-shadow hover:shadow-md">
+                <h2 class="text-lg font-extrabold mb-4 text-gray-900 dark:text-white">나를 위한 트렌드</h2>
+                <ul class="space-y-4">
+                    <li class="group cursor-pointer">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">대한민국에서 트렌드 중</p>
+                        <p class="font-bold text-gray-900 dark:text-white group-hover:text-blue-500 transition-colors">#웹사이트_만들기</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">12.5K Posts</p>
+                    </li>
+                    <li class="group cursor-pointer">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">기술 · 트렌드</p>
+                        <p class="font-bold text-gray-900 dark:text-white group-hover:text-blue-500 transition-colors">GitHub Actions</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">8,102 Posts</p>
+                    </li>
+                    <li class="group cursor-pointer">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">개발 · 트렌드</p>
+                        <p class="font-bold text-gray-900 dark:text-white group-hover:text-blue-500 transition-colors">TailwindCSS</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">4,321 Posts</p>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Center Feed -->
+        <section class="w-full lg:w-1/2 max-w-2xl">
+            <!-- Tweet Input Box -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 mb-6 transition-shadow hover:shadow-md">
+                <div class="flex space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="h-12 w-12 rounded-full bg-gradient-to-tr from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                            U
+                        </div>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <form action="#" class="relative">
+                            <div class="border-b border-gray-200 dark:border-gray-700 focus-within:border-blue-500 pb-2 transition-colors">
+                                <label for="tweet" class="sr-only">무슨 일이 일어나고 있나요?</label>
+                                <textarea id="tweet" name="tweet" rows="3" class="block w-full resize-none border-0 p-0 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-0 sm:text-lg bg-transparent" placeholder="무슨 일이 일어나고 있나요?"></textarea>
+                            </div>
+                            <div class="pt-3 flex justify-between items-center">
+                                <div class="flex items-center space-x-2 text-blue-500">
+                                    <button type="button" class="p-2 hover:bg-blue-50 dark:hover:bg-gray-700 rounded-full transition-colors tooltip-trigger" title="미디어">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    </button>
+                                    <button type="button" class="p-2 hover:bg-blue-50 dark:hover:bg-gray-700 rounded-full transition-colors tooltip-trigger" title="GIF">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    </button>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <button type="submit" class="inline-flex items-center px-5 py-2 border border-transparent text-sm font-bold rounded-full shadow-sm text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors">
+                                        게시하기
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feed Stream -->
+            <div class="space-y-4">
+                <!-- Sample Tweet 1 -->
+                <article class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer group">
+                    <div class="flex space-x-3">
+                        <div class="flex-shrink-0">
+                            <div class="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-bold">
+                                A
+                            </div>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-sm font-medium text-gray-900 dark:text-white flex items-center">
+                                <span class="hover:underline font-bold">AI Assistant</span>
+                                <span class="text-gray-500 ml-1 font-normal">@ai_helper · 1분 전</span>
+                            </div>
+                            <p class="text-sm text-gray-800 dark:text-gray-200 mt-1">
+                                드디어 저만의 공간이 생겼습니다! 첫 홈페이지 배포를 환영합니다. ✨<br><br>
+                                #첫게시물 #홈페이지 #성공적
+                            </p>
+                            <!-- Interaction Buttons -->
+                            <div class="mt-4 flex justify-between w-full max-w-md text-gray-500 dark:text-gray-400">
+                                <button class="flex items-center space-x-2 hover:text-blue-500 group-hover:text-gray-500 transition-colors">
+                                    <div class="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></div>
+                                    <span class="text-xs">3</span>
+                                </button>
+                                <button class="flex items-center space-x-2 hover:text-green-500 group-hover:text-gray-500 transition-colors">
+                                    <div class="p-2 rounded-full hover:bg-green-50 dark:hover:bg-gray-700 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></div>
+                                    <span class="text-xs">12</span>
+                                </button>
+                                <button class="flex items-center space-x-2 hover:text-red-500 group-hover:text-gray-500 transition-colors">
+                                    <div class="p-2 rounded-full hover:bg-red-50 dark:hover:bg-gray-700 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></div>
+                                    <span class="text-xs">48</span>
+                                </button>
+                                <button class="flex items-center space-x-2 hover:text-blue-500 group-hover:text-gray-500 transition-colors">
+                                    <div class="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Sample Tweet 2 -->
+                <article class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer group">
+                    <div class="flex space-x-3">
+                        <div class="flex-shrink-0">
+                            <div class="h-10 w-10 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center text-yellow-600 dark:text-yellow-300 font-bold">
+                                E
+                            </div>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-sm font-medium text-gray-900 dark:text-white flex items-center">
+                                <span class="hover:underline font-bold">Estar041</span>
+                                <span class="text-gray-500 ml-1 font-normal">@estar041 · 10분 전</span>
+                            </div>
+                            <p class="text-sm text-gray-800 dark:text-gray-200 mt-1 mb-3">
+                                새로운 웹 디자인 기술을 배우는 중입니다. TailwindCSS는 정말 강력하네요! 레이아웃 잡는 속도가 엄청나게 빨라졌어요. 🚀
+                            </p>
+                            <!-- Mock Image -->
+                            <div class="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 h-48 bg-gray-200 dark:bg-gray-700 relative group-hover:opacity-95 transition-opacity">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                </div>
+                            </div>
+                            <!-- Interaction Buttons -->
+                            <div class="mt-4 flex justify-between w-full max-w-md text-gray-500 dark:text-gray-400">
+                                <button class="flex items-center space-x-2 hover:text-blue-500 group-hover:text-gray-500 transition-colors">
+                                    <div class="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></div>
+                                    <span class="text-xs">1</span>
+                                </button>
+                                <button class="flex items-center space-x-2 hover:text-green-500 group-hover:text-gray-500 transition-colors">
+                                    <div class="p-2 rounded-full hover:bg-green-50 dark:hover:bg-gray-700 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></div>
+                                    <span class="text-xs">5</span>
+                                </button>
+                                <button class="flex items-center space-x-2 hover:text-red-500 group-hover:text-gray-500 transition-colors">
+                                    <div class="p-2 rounded-full hover:bg-red-50 dark:hover:bg-gray-700 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></div>
+                                    <span class="text-xs">24</span>
+                                </button>
+                                <button class="flex items-center space-x-2 hover:text-blue-500 group-hover:text-gray-500 transition-colors">
+                                    <div class="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Right Sidebar (Who to follow) -->
+        <aside class="hidden xl:block w-1/4">
+            <div class="sticky top-24 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5">
+                <h2 class="text-lg font-extrabold mb-4 text-gray-900 dark:text-white">팔로우 추천</h2>
+                <ul class="space-y-4">
+                    <li class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3 cursor-pointer group">
+                            <div class="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar" />
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900 dark:text-white group-hover:underline">웹 디자이너</p>
+                                <p class="text-xs text-gray-500">@web_design_pro</p>
+                            </div>
+                        </div>
+                        <button class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm font-bold py-1.5 px-4 rounded-full hover:opacity-90 transition-opacity">
+                            팔로우
+                        </button>
+                    </li>
+                    <li class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3 cursor-pointer group">
+                            <div class="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka" alt="avatar" />
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900 dark:text-white group-hover:underline">DevNews</p>
+                                <p class="text-xs text-gray-500">@developer_news</p>
+                            </div>
+                        </div>
+                        <button class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm font-bold py-1.5 px-4 rounded-full hover:opacity-90 transition-opacity">
+                            팔로우
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            
+            <footer class="mt-6 px-4">
+                <nav class="flex flex-wrap text-xs text-gray-500 dark:text-gray-400 gap-x-3 gap-y-1">
+                    <a href="#" class="hover:underline">이용약관</a>
+                    <a href="#" class="hover:underline">개인정보 처리방침</a>
+                    <a href="#" class="hover:underline">쿠키 정책</a>
+                    <a href="#" class="hover:underline">접근성</a>
+                    <a href="#" class="hover:underline">광고 정보</a>
+                    <a href="#" class="hover:underline">더 보기</a>
+                    <span>© 2026 EstarTweet.</span>
+                </nav>
+            </footer>
+        </aside>
+    </main>
+
+</body>
+</html>
