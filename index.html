@@ -168,19 +168,19 @@
             </div>
 
             <!-- Right: Status / Warning Panel -->
-            <div class="w-full lg:w-[26rem] xl:w-[28rem] flex-shrink-0">
+            <div class="w-full lg:w-80 xl:w-96 flex-shrink-0">
                 <div class="sticky top-8">
                     <!-- Warning Card -->
                     <div id="warning-panel"
                         class="hidden bg-white px-6 py-8 rounded-3xl shadow-md border border-gray-100 border-b-4 border-b-gray-800 transition-all duration-300 transform">
-                        <div class="flex gap-4 items-center">
+                        <div class="flex gap-4 items-center justify-center">
                             <div id="first-warning-num" onclick="scrollToPara(parseInt(this.innerText))"
                                 title="클릭하여 해당 위치로 이동"
-                                class="bg-gray-800 text-white text-5xl sm:text-6xl font-black min-w-[7rem] sm:min-w-[9rem] px-4 h-24 flex items-center justify-center rounded-2xl shadow flex-shrink-0 cursor-pointer hover:bg-gray-700 transition-colors">
+                                class="bg-gray-800 text-white text-5xl sm:text-6xl font-black w-20 sm:w-24 px-2 h-24 flex items-center justify-center rounded-2xl shadow flex-shrink-0 cursor-pointer hover:bg-gray-700 transition-colors">
                                 2
                             </div>
                             <div
-                                class="text-xl sm:text-2xl font-black text-gray-800 leading-tight tracking-tight break-keep flex-1">
+                                class="text-xl sm:text-2xl font-black text-gray-800 leading-tight tracking-tight break-keep">
                                 번째 문단이<br>글자수를 초과해요.
                             </div>
                         </div>
@@ -372,15 +372,22 @@
                 if (el && totalHeight > 0) {
                     const topPercent = (el.offsetTop / totalHeight) * 100;
 
-                    const marker = document.createElement('div');
-                    marker.className = 'absolute w-6 h-1.5 bg-red-400 rounded-full cursor-pointer hover:bg-red-600 hover:scale-110 transition-transform shadow-sm';
-                    marker.title = `${num}번째 문단 가기`;
-                    marker.style.top = `${topPercent}%`;
-                    marker.style.left = '50%';
-                    marker.style.transform = 'translate(-50%, -50%)';
-                    marker.onclick = () => scrollToPara(num);
+                    const markerContainer = document.createElement('div');
+                    markerContainer.className = 'absolute w-full h-1.5 group cursor-pointer';
+                    markerContainer.style.top = `${topPercent}%`;
+                    markerContainer.style.transform = 'translateY(-50%)';
+                    markerContainer.onclick = () => scrollToPara(num);
 
-                    minimap.appendChild(marker);
+                    const marker = document.createElement('div');
+                    marker.className = 'absolute w-6 h-full bg-red-400 rounded-full group-hover:bg-red-600 group-hover:scale-110 transition-transform shadow-sm left-1/2 -translate-x-1/2';
+
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'absolute right-full mr-2 top-1/2 -translate-y-1/2 bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-md z-[60]';
+                    tooltip.innerHTML = `${num} 문단 <span class="text-[10px] text-gray-300 ml-1">이동</span>`;
+
+                    markerContainer.appendChild(marker);
+                    markerContainer.appendChild(tooltip);
+                    minimap.appendChild(markerContainer);
                 }
             });
         }
