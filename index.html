@@ -81,7 +81,7 @@
             position: absolute;
             top: -1.75rem;
             left: 0;
-            background-color: rgba(0, 0, 0, 0.65);
+            background-color: rgba(0, 0, 0, 0.6);
             color: #ffffff;
             padding: 0.25rem 0.6rem;
             border-radius: 0.75rem;
@@ -90,8 +90,6 @@
             line-height: 1.25;
             white-space: nowrap;
             z-index: 10;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
@@ -133,12 +131,29 @@
                         <span class="text-xs text-blue-500 font-bold bg-blue-50 px-3 py-1.5 rounded-full">자동 검사 중</span>
                     </div>
 
-                    <div class="editor-container h-[600px]">
-                        <!-- Backdrop div for highlighting -->
-                        <div id="backdrop" class="editor-layer" aria-hidden="true"></div>
-                        <!-- Actual textarea -->
-                        <textarea id="editor" class="editor-layer" spellcheck="false"
-                            placeholder="여기에 긴 글을 작성하세요. 줄바꿈(Enter) 단위로 하나의 트윗(문단)으로 계산됩니다.&#10;140자가 넘어가는 부분은 붉은색으로 자동 표시됩니다."></textarea>
+                    <div class="flex gap-4 h-[600px]">
+                        <div class="editor-container flex-1">
+                            <!-- Backdrop div for highlighting -->
+                            <div id="backdrop" class="editor-layer" aria-hidden="true" style="z-index: 1;"></div>
+                            <!-- Actual textarea -->
+                            <textarea id="editor" class="editor-layer" spellcheck="false" style="z-index: 2;"
+                                placeholder="여기에 긴 글을 작성하세요. 줄바꿈(Enter) 단위로 하나의 트윗(문단)으로 계산됩니다.&#10;140자(영문/기호 280자)가 넘어가는 부분은 붉은색으로 자동 표시됩니다."></textarea>
+                            <!-- Tooltip Layer (Above textarea text) -->
+                            <div id="tooltip-layer" class="editor-layer" aria-hidden="true"
+                                style="position: absolute; top: 0; left: 0; z-index: 3; pointer-events: none; background: transparent; border-color: transparent; color: transparent;">
+                            </div>
+                        </div>
+
+                        <!-- Custom Error Minimap / Scrollbar -->
+                        <div class="w-12 bg-gray-50 border border-gray-200 rounded-xl relative shadow-inner hidden md:block flex-shrink-0"
+                            id="minimap-container">
+                            <div
+                                class="absolute top-2 w-full text-center text-[10px] text-gray-500 font-bold select-none cursor-default">
+                                위치<br>탐색</div>
+                            <div id="minimap-markers" class="absolute top-12 bottom-4 left-0 right-0 relative">
+                                <!-- Markers injected via JS -->
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mt-4 flex justify-between items-center text-sm text-gray-500">
@@ -158,8 +173,9 @@
                     <div id="warning-panel"
                         class="hidden bg-white px-6 py-8 rounded-3xl shadow-md border border-gray-100 border-b-4 border-b-gray-800 transition-all duration-300 transform">
                         <div class="flex gap-4 items-center">
-                            <div id="first-warning-num"
-                                class="bg-gray-800 text-white text-6xl font-black w-20 h-24 flex items-center justify-center rounded-2xl shadow flex-shrink-0">
+                            <div id="first-warning-num" onclick="scrollToPara(parseInt(this.innerText))"
+                                title="클릭하여 해당 위치로 이동"
+                                class="bg-gray-800 text-white text-6xl font-black min-w-[9rem] px-4 h-24 flex items-center justify-center rounded-2xl shadow flex-shrink-0 cursor-pointer hover:bg-gray-700 transition-colors">
                                 2
                             </div>
                             <div class="text-2xl font-black text-gray-800 leading-tight tracking-tight">
@@ -168,11 +184,12 @@
                         </div>
 
                         <div id="other-warnings-container" class="hidden mt-6 pt-4 border-t border-gray-100">
-                            <p class="text-sm font-bold text-gray-500">
-                                그 외 글자수 초과 문단: <br>
-                                <span id="other-warning-nums"
-                                    class="text-lg text-gray-800 font-black mt-1 inline-block">6, 7, 8</span>
+                            <p class="text-sm font-bold text-gray-500 mb-2">
+                                그 외 과 문단 (클릭하여 이동):
                             </p>
+                            <div id="other-warning-nums" class="flex flex-wrap gap-2">
+                                <!-- Buttons will be injected here -->
+                            </div>
                         </div>
                     </div>
 
@@ -208,6 +225,7 @@
     <script>
         const textarea = document.getElementById('editor');
         const backdrop = document.getElementById('backdrop');
+        const tooltipLayer = document.getElementById('tooltip-layer');
         const warningPanel = document.getElementById('warning-panel');
         const successPanel = document.getElementById('success-panel');
         const introPanel = document.getElementById('intro-panel');
@@ -215,12 +233,15 @@
         const otherWarningsContainer = document.getElementById('other-warnings-container');
         const otherWarningNums = document.getElementById('other-warning-nums');
 
-        const TWITTER_MAX_CHARS = 140;
+        // 트위터 실제 로직: 최대 280 (한글/단어 2, 영문/기호/공백 1)
+        const TWITTER_MAX_WEIGHT = 280;
 
         // Sync scrolling
         textarea.addEventListener('scroll', () => {
             backdrop.scrollTop = textarea.scrollTop;
             backdrop.scrollLeft = textarea.scrollLeft;
+            tooltipLayer.scrollTop = textarea.scrollTop;
+            tooltipLayer.scrollLeft = textarea.scrollLeft;
         });
 
         // HTML Escape wrapper
@@ -233,47 +254,84 @@
                 .replace(/'/g, "&#039;");
         }
 
+        // 트위터 글자수 가중치 계산 (반각 1, 전각 2)
+        function getCharWeight(char) {
+            const code = char.charCodeAt(0);
+            if (code >= 0x1100 &&
+                (code <= 0x11FF || // 한글 자모
+                    code === 0x20A9 || // 원화 기호
+                    (code >= 0x2E80 && code <= 0xD7AF) || // 한중일 부수, 히라가나, 가타카나, 한글 음절
+                    (code >= 0xF900 && code <= 0xFAFF) || // 한중일 호환 한자
+                    (code >= 0xFE30 && code <= 0xFE4F) || // 한중일 호환 형태
+                    (code >= 0xFF00 && code <= 0xFFEF))) { // 반각/전각 형태
+                return 2;
+            }
+            return 1;
+        }
+
+        function calculateTweetSplit(text) {
+            let weight = 0;
+            let splitIndex = text.length;
+            for (let i = 0; i < text.length; i++) {
+                weight += getCharWeight(text[i]);
+                if (weight > TWITTER_MAX_WEIGHT) {
+                    splitIndex = i;
+                    break;
+                }
+            }
+            return {
+                validPart: text.slice(0, splitIndex),
+                exceededPart: text.slice(splitIndex),
+                isExceeded: weight > TWITTER_MAX_WEIGHT
+            };
+        }
+
         function checkText() {
             const text = textarea.value;
             let backdropHtml = '';
+            let tooltipHtml = '';
 
-            // To ensure perfect alignment with textarea, split purely by newline
             const lines = text.split('\n');
             const exceededLines = [];
 
             lines.forEach((line, index) => {
-                if (line.length > TWITTER_MAX_CHARS) {
-                    exceededLines.push(index + 1);
-                    const validPart = line.slice(0, TWITTER_MAX_CHARS);
-                    const exceededPart = line.slice(TWITTER_MAX_CHARS);
+                const pNum = index + 1;
+                const { validPart, exceededPart, isExceeded } = calculateTweetSplit(line);
 
-                    // Add mark with a tooltip structure (tooltip might be slightly obscured by textarea text, but visibility is decent)
-                    backdropHtml += `<span>${escapeHtml(validPart)}</span><mark>` +
-                        `${escapeHtml(exceededPart)}<span class="limit-tooltip">글자수초과!</span></mark>`;
+                if (isExceeded) {
+                    exceededLines.push(pNum);
+
+                    // Backdrop gets the highlight block
+                    backdropHtml += `<span id="para-${pNum}">${escapeHtml(validPart)}</span><mark id="para-mark-${pNum}">${escapeHtml(exceededPart)}</mark>`;
+
+                    // TooltipLayer gets transparent text and the floating tooltip widget
+                    tooltipHtml += `<span style="color:transparent">${escapeHtml(validPart)}</span><mark style="background:transparent; color:transparent; position:relative"><span class="limit-tooltip">글자수초과!</span>${escapeHtml(exceededPart)}</mark>`;
                 } else {
-                    backdropHtml += `<span>${escapeHtml(line)}</span>`;
+                    backdropHtml += `<span id="para-${pNum}">${escapeHtml(line)}</span>`;
+                    tooltipHtml += `<span style="color:transparent">${escapeHtml(line)}</span>`;
                 }
 
-                // Add <br> except for the last line split
                 if (index < lines.length - 1) {
                     backdropHtml += '<br>';
+                    tooltipHtml += '<br>';
                 }
             });
 
-            // Ensure trailing newlines don't collapse in HTML
-            // If the text ends with '\n', the last split item is an empty string. The browser might skip rendering the trailing newline space unless we use <br><br> or <br>&nbsp; depending on exact CSS. 
-            // `white-space: pre-wrap` with <br> works exactly like normal textarea.
-
             backdrop.innerHTML = backdropHtml;
+            tooltipLayer.innerHTML = tooltipHtml;
+
+            // Render Minimap and Update UI
+            // We need requestAnimationFrame to let DOM update layout before measuring offsetTop
+            requestAnimationFrame(() => {
+                renderMinimap(exceededLines);
+            });
 
             // Update Side Panel UI
             if (text.length === 0) {
-                // Empty State
                 warningPanel.classList.add('hidden');
                 successPanel.classList.add('hidden');
                 introPanel.classList.remove('hidden');
             } else if (exceededLines.length > 0) {
-                // Formatting Errors
                 introPanel.classList.add('hidden');
                 successPanel.classList.add('hidden');
                 warningPanel.classList.remove('hidden');
@@ -282,15 +340,66 @@
 
                 if (exceededLines.length > 1) {
                     otherWarningsContainer.classList.remove('hidden');
-                    otherWarningNums.textContent = exceededLines.slice(1).join(', ');
+                    otherWarningNums.innerHTML = '';
+                    exceededLines.slice(1).forEach(num => {
+                        const btn = document.createElement('button');
+                        btn.className = 'px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-bold transition-colors border border-red-100';
+                        btn.textContent = num;
+                        btn.onclick = () => scrollToPara(num);
+                        otherWarningNums.appendChild(btn);
+                    });
                 } else {
                     otherWarningsContainer.classList.add('hidden');
                 }
             } else {
-                // All Good
                 introPanel.classList.add('hidden');
                 warningPanel.classList.add('hidden');
                 successPanel.classList.remove('hidden');
+            }
+        }
+
+        // Minimap Render Function
+        function renderMinimap(exceededLines) {
+            const minimap = document.getElementById('minimap-markers');
+            minimap.innerHTML = '';
+
+            const totalHeight = backdrop.scrollHeight;
+
+            exceededLines.forEach(num => {
+                const el = document.getElementById('para-' + num);
+                if (el && totalHeight > 0) {
+                    const topPercent = (el.offsetTop / totalHeight) * 100;
+
+                    const marker = document.createElement('div');
+                    marker.className = 'absolute w-6 h-1.5 bg-red-400 rounded-full cursor-pointer hover:bg-red-600 hover:scale-110 transition-transform shadow-sm';
+                    marker.title = `${num}번째 문단 가기`;
+                    marker.style.top = `${topPercent}%`;
+                    marker.style.left = '50%';
+                    marker.style.transform = 'translate(-50%, -50%)';
+                    marker.onclick = () => scrollToPara(num);
+
+                    minimap.appendChild(marker);
+                }
+            });
+        }
+
+        // Scroll navigation
+        function scrollToPara(num) {
+            const el = document.getElementById('para-' + num);
+            if (el) {
+                textarea.scrollTo({
+                    top: el.offsetTop - 40,
+                    behavior: 'smooth'
+                });
+
+                // Optional: flash animation or highlight on the specific mark
+                const mark = document.getElementById('para-mark-' + num);
+                if (mark) {
+                    mark.style.backgroundColor = '#f87171'; // darker red
+                    setTimeout(() => {
+                        mark.style.backgroundColor = '';
+                    }, 500);
+                }
             }
         }
 
