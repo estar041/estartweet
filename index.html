@@ -131,7 +131,7 @@
                         <span class="text-xs text-blue-500 font-bold bg-blue-50 px-3 py-1.5 rounded-full">자동 검사 중</span>
                     </div>
 
-                    <div class="flex gap-4 h-[400px] md:h-[600px]">
+                    <div class="flex gap-4 h-[500px] md:h-[600px] lg:h-[750px]">
                         <div class="editor-container flex-1">
                             <!-- Backdrop div for highlighting -->
                             <div id="backdrop" class="editor-layer pr-4 md:pr-16" aria-hidden="true"
@@ -237,7 +237,7 @@
                                 </svg>
                             </button>
                             <div class="text-xs text-gray-500 font-medium leading-relaxed">
-                                <span class="font-bold text-gray-700">문단 나누기 도구</span><br>가위 버튼을 누른 채로 글자 사이를 클릭 시, 그
+                                <span class="font-bold text-gray-700">문단 나누기 도구</span><br>가위 버튼을 누른 채로 글자 사이를 클릭 시,<br>그
                                 위치에서 문단이 나뉩니다.
                             </div>
                         </div>
@@ -253,8 +253,9 @@
                                         </path>
                                     </svg>
                                 </div>
-                                <div class="text-xs text-gray-500 font-medium flex-1">
-                                    배경이 투명한 캐릭터 등 여러 이미지를 화면에 자유롭게 띄울 수 있습니다!<br>(이미지를 끌어서 드래그하거나 우측 하단을 잡아 크기 조절 가능)
+                                <div class="text-xs text-gray-500 font-medium flex-1 leading-relaxed">
+                                    <span class="font-bold text-gray-700">꾸미기 도구</span><br>이미지를 불러와 꾸미는 용도입니다. 화면 캡처 후
+                                    붙여넣기(Ctrl+V)도 지원됩니다.<br>우측 하단을 잡아 크기 조절이 가능합니다.
                                 </div>
                                 <label for="image-upload"
                                     class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors shadow flex-shrink-0">
@@ -619,6 +620,24 @@
             document.addEventListener('mousemove', onMouseMove);
             document.addEventListener('mouseup', onMouseUp);
         }
+
+        // 이미지 붙여넣기 (Ctrl + V) 기능 지원
+        document.addEventListener('paste', function (e) {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const file = items[i].getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = function (evt) {
+                        // 붙여넣은 이미지는 화면 중앙쯤에 띄움
+                        const startX = window.innerWidth / 2 - 125;
+                        const startY = Math.max(100, window.innerHeight / 2 - 125);
+                        createFloatingSticker(evt.target.result, startX, startY);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
 
     </script>
 </body>
