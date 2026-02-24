@@ -145,8 +145,8 @@
                         </div>
 
                         <!-- Custom Error Minimap / Scrollbar -->
-                        <div class="w-12 bg-gray-50 border border-gray-200 rounded-xl relative shadow-inner hidden md:block flex-shrink-0 z-[50]"
-                            id="minimap-container">
+                        <div class="w-12 bg-gray-50 border border-gray-200 rounded-xl relative shadow-inner hidden md:block flex-shrink-0"
+                            id="minimap-container" style="z-index: 50;">
                             <div
                                 class="absolute top-2 w-full text-center text-[10px] text-gray-500 font-bold select-none cursor-default">
                                 위치<br>탐색</div>
@@ -382,7 +382,8 @@
                     marker.className = 'absolute w-6 h-full bg-red-400 rounded-full group-hover:bg-red-600 group-hover:scale-110 transition-transform shadow-sm left-1/2 -translate-x-1/2';
 
                     const tooltip = document.createElement('div');
-                    tooltip.className = 'absolute right-full mr-2 top-1/2 -translate-y-1/2 bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-md z-[60]';
+                    tooltip.className = 'absolute right-full mr-2 top-1/2 -translate-y-1/2 bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-md';
+                    tooltip.style.zIndex = '60';
                     tooltip.innerHTML = `${num} 문단 <span class="text-[10px] text-gray-300 ml-1">이동</span>`;
 
                     markerContainer.appendChild(marker);
