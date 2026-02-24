@@ -134,12 +134,14 @@
                     <div class="flex gap-4 h-[400px] md:h-[600px]">
                         <div class="editor-container flex-1">
                             <!-- Backdrop div for highlighting -->
-                            <div id="backdrop" class="editor-layer" aria-hidden="true" style="z-index: 1;"></div>
+                            <div id="backdrop" class="editor-layer pr-4 md:pr-16" aria-hidden="true"
+                                style="z-index: 1;"></div>
                             <!-- Actual textarea -->
-                            <textarea id="editor" class="editor-layer" spellcheck="false" style="z-index: 2;"
+                            <textarea id="editor" class="editor-layer pr-4 md:pr-16" spellcheck="false"
+                                style="z-index: 2;"
                                 placeholder="여기에 긴 글을 작성하세요. 줄바꿈(Enter) 단위로 하나의 트윗(문단)으로 계산됩니다.&#10;140자(영문/기호 280자)가 넘어가는 부분은 붉은색으로 자동 표시됩니다."></textarea>
                             <!-- Tooltip Layer (Above textarea text) -->
-                            <div id="tooltip-layer" class="editor-layer" aria-hidden="true"
+                            <div id="tooltip-layer" class="editor-layer pr-4 md:pr-16" aria-hidden="true"
                                 style="position: absolute; top: 0; left: 0; z-index: 3; pointer-events: none; background: transparent; border-color: transparent; color: transparent;">
                             </div>
                         </div>
@@ -210,7 +212,7 @@
                     </div>
 
                     <!-- Intro Card (Empty state) -->
-                    <div id="intro-panel" class="bg-gray-50 border border-gray-200 px-6 py-8 rounded-3xl hidden">
+                    <div id="intro-panel" class="bg-gray-50 border border-gray-200 px-6 py-8 rounded-3xl hidden mb-6">
                         <h3 class="text-lg font-bold text-gray-800 mb-2">어떻게 사용하나요?</h3>
                         <p class="text-sm text-gray-600 leading-relaxed mb-4">
                             여기에 타래로 쓸 긴 글을 편하게 쓰세요. 엔터(줄바꿈)를 기준으로 하나의 트윗이 됩니다.
@@ -218,6 +220,70 @@
                         <p class="text-sm text-gray-600 leading-relaxed">
                             트위터 한국어 기준인 140자가 초과될 우려가 있는 부분을 실시간으로 붉게 표시해 드립니다.
                         </p>
+                    </div>
+
+                    <!-- Extra Tools: Scissors & Image Viewer -->
+                    <div class="flex flex-col gap-4 mt-6">
+                        <!-- Scissors Tool -->
+                        <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-4 transition-all"
+                            id="scissors-card">
+                            <button id="scissors-btn"
+                                class="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors shadow-inner"
+                                title="가위 도구 켜기/끄기">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z">
+                                    </path>
+                                </svg>
+                            </button>
+                            <div class="text-xs text-gray-500 font-medium leading-relaxed">
+                                <span class="font-bold text-gray-700">문단 나누기 도구</span><br>가위 버튼을 켠 상태로 글자를 클릭하면, 그 위치에서
+                                문단(트윗)이 나뉩니다.
+                            </div>
+                        </div>
+
+                        <!-- Image Attachment Tool -->
+                        <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex flex-col gap-3">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-blue-50 text-blue-500">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div class="text-xs text-gray-500 font-medium flex-1">
+                                    글을 쓸 때 참고할 이미지를 띄워둘 수 있습니다.<br>(새로고침 시 사라짐)
+                                </div>
+                                <label for="image-upload"
+                                    class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors shadow flex-shrink-0">
+                                    불러오기
+                                </label>
+                                <input type="file" id="image-upload" accept="image/*" class="hidden">
+                            </div>
+
+                            <!-- Preview Container -->
+                            <div id="image-preview-container"
+                                class="hidden relative group rounded-xl overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center min-h-[100px] max-h-[300px]">
+                                <img id="image-preview" src="" alt="참고 이미지" class="object-contain max-h-[300px] w-auto">
+                                <button id="close-image-btn"
+                                    class="absolute top-2 right-2 bg-black/50 hover:bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                                <div
+                                    class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/60 rounded-full px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2">
+                                    <button class="text-white hover:text-blue-300 px-1" title="축소"
+                                        onclick="adjustImageSize(-10)">-</button>
+                                    <span class="text-white text-[10px] font-bold" id="image-scale-text">100%</span>
+                                    <button class="text-white hover:text-blue-300 px-1" title="확대"
+                                        onclick="adjustImageSize(10)">+</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -425,6 +491,111 @@
             document.execCommand('copy');
             alert('클립보드에 복사되었습니다.');
         });
+
+        // -----------------------------------------
+        // 가위 (문단 나누기) 도구 로직
+        // -----------------------------------------
+        const scissorsBtn = document.getElementById('scissors-btn');
+        const scissorsCard = document.getElementById('scissors-card');
+        let isScissorsMode = false;
+
+        scissorsBtn.addEventListener('click', () => {
+            isScissorsMode = !isScissorsMode;
+            if (isScissorsMode) {
+                // 가위 모드 ON: 버튼 모양 변경, 텍스트 커서 변경
+                scissorsBtn.classList.remove('bg-gray-100', 'text-gray-600');
+                scissorsBtn.classList.add('bg-gray-800', 'text-white', 'shadow-md');
+                scissorsCard.classList.add('border-gray-800', 'ring-2', 'ring-gray-800');
+                textarea.style.cursor = 'crosshair';
+            } else {
+                // 가위 모드 OFF
+                scissorsBtn.classList.add('bg-gray-100', 'text-gray-600');
+                scissorsBtn.classList.remove('bg-gray-800', 'text-white', 'shadow-md');
+                scissorsCard.classList.remove('border-gray-800', 'ring-2', 'ring-gray-800');
+                textarea.style.cursor = 'text';
+            }
+        });
+
+        // textarea 클릭 시 가위 모드이면 해당 커서 위치에서 줄바꿈 삽입
+        textarea.addEventListener('click', (e) => {
+            if (!isScissorsMode) return;
+
+            // 현재 커서 포인터(선택) 위치 가져오기
+            const cursorPos = textarea.selectionStart;
+
+            if (cursorPos !== undefined) {
+                const text = textarea.value;
+                const before = text.substring(0, cursorPos);
+                const after = text.substring(cursorPos);
+
+                // 줄바꿈 적용
+                textarea.value = before + '\n' + after;
+
+                // 줄바꿈 후 커서 위치 조정 및 UI 업데이트
+                textarea.selectionStart = cursorPos + 1;
+                textarea.selectionEnd = cursorPos + 1;
+                checkText();
+
+                // 가위 모드 1회 사용 후 해제할지 유지할지는 선택 (유지하는 방향으로 둡니다)
+            }
+        });
+
+        // 단축키 허용 (ESC 누르면 가위 모드 취소)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isScissorsMode) {
+                scissorsBtn.click(); // 토글 이벤트 호출
+            }
+        });
+
+        // -----------------------------------------
+        // 이미지 뷰어 (첨부) 로직
+        // -----------------------------------------
+        const imageUpload = document.getElementById('image-upload');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const imagePreview = document.getElementById('image-preview');
+        const closeImageBtn = document.getElementById('close-image-btn');
+        const imageScaleText = document.getElementById('image-scale-text');
+
+        let currentScale = 100;
+
+        imageUpload.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    imagePreview.src = evt.target.result;
+                    imagePreviewContainer.classList.remove('hidden');
+                    currentScale = 100;
+                    updateImageScaleUI();
+                }
+                reader.readAsDataURL(file);
+            }
+            // 같은 파일을 다시 선택할 수 있도록 초기화
+            e.target.value = '';
+        });
+
+        closeImageBtn.addEventListener('click', () => {
+            imagePreview.src = '';
+            imagePreviewContainer.classList.add('hidden');
+        });
+
+        // 전역 함수로 크기 조절 노출
+        window.adjustImageSize = function (amount) {
+            currentScale += amount;
+            // 크기 제한: 20% ~ 200%
+            if (currentScale < 20) currentScale = 20;
+            if (currentScale > 200) currentScale = 200;
+
+            updateImageScaleUI();
+        };
+
+        function updateImageScaleUI() {
+            imageScaleText.innerText = currentScale + '%';
+            imagePreview.style.transform = `scale(${currentScale / 100})`;
+            // 스케일 변화 중심점을 중앙으로 유지
+            imagePreview.style.transformOrigin = 'center';
+        }
+
     </script>
 </body>
 
