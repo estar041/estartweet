@@ -305,7 +305,7 @@
                     backdropHtml += `<span id="para-${pNum}">${escapeHtml(validPart)}</span><mark id="para-mark-${pNum}">${escapeHtml(exceededPart)}</mark>`;
 
                     // TooltipLayer gets transparent text and the floating tooltip widget
-                    tooltipHtml += `<span style="color:transparent">${escapeHtml(validPart)}</span><mark style="background:transparent; color:transparent; position:relative"><span class="limit-tooltip">글자수 초과!</span>${escapeHtml(exceededPart)}</mark>`;
+                    tooltipHtml += `<span style="color:transparent">${escapeHtml(validPart)}</span><mark style="background:transparent; color:transparent; position:relative"><span class="limit-tooltip">${exceededPart.length}자 초과!</span>${escapeHtml(exceededPart)}</mark>`;
                 } else {
                     backdropHtml += `<span id="para-${pNum}">${escapeHtml(line)}</span>`;
                     tooltipHtml += `<span style="color:transparent">${escapeHtml(line)}</span>`;
