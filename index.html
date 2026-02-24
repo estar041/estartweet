@@ -150,7 +150,7 @@
                             <div
                                 class="absolute top-2 w-full text-center text-[10px] text-gray-500 font-bold select-none cursor-default">
                                 위치<br>탐색</div>
-                            <div id="minimap-markers" class="absolute top-12 bottom-4 left-0 right-0 relative">
+                            <div id="minimap-markers" class="absolute top-12 bottom-4 left-0 right-0">
                                 <!-- Markers injected via JS -->
                             </div>
                         </div>
@@ -185,7 +185,7 @@
 
                         <div id="other-warnings-container" class="hidden mt-6 pt-4 border-t border-gray-100">
                             <p class="text-sm font-bold text-gray-500 mb-2">
-                                그 외 과 문단 (클릭하여 이동):
+                                그 외 초과 문단 (클릭하여 이동):
                             </p>
                             <div id="other-warning-nums" class="flex flex-wrap gap-2">
                                 <!-- Buttons will be injected here -->
@@ -305,7 +305,7 @@
                     backdropHtml += `<span id="para-${pNum}">${escapeHtml(validPart)}</span><mark id="para-mark-${pNum}">${escapeHtml(exceededPart)}</mark>`;
 
                     // TooltipLayer gets transparent text and the floating tooltip widget
-                    tooltipHtml += `<span style="color:transparent">${escapeHtml(validPart)}</span><mark style="background:transparent; color:transparent; position:relative"><span class="limit-tooltip">글자수초과!</span>${escapeHtml(exceededPart)}</mark>`;
+                    tooltipHtml += `<span style="color:transparent">${escapeHtml(validPart)}</span><mark style="background:transparent; color:transparent; position:relative"><span class="limit-tooltip">글자수 초과!</span>${escapeHtml(exceededPart)}</mark>`;
                 } else {
                     backdropHtml += `<span id="para-${pNum}">${escapeHtml(line)}</span>`;
                     tooltipHtml += `<span style="color:transparent">${escapeHtml(line)}</span>`;
@@ -343,7 +343,7 @@
                     otherWarningNums.innerHTML = '';
                     exceededLines.slice(1).forEach(num => {
                         const btn = document.createElement('button');
-                        btn.className = 'px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-bold transition-colors border border-red-100';
+                        btn.className = 'px-3 py-1.5 bg-white hover:bg-red-50 text-gray-700 hover:text-red-600 rounded-full text-sm font-bold transition-colors border border-gray-300 shadow-sm';
                         btn.textContent = num;
                         btn.onclick = () => scrollToPara(num);
                         otherWarningNums.appendChild(btn);
