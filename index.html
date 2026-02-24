@@ -10,7 +10,7 @@
         .editor-container {
             position: relative;
             background-color: #fff;
-            border-radius: 0.5rem;
+            border-radius: 1rem;
         }
 
         .editor-layer {
@@ -19,7 +19,7 @@
             padding: 1.5rem;
             margin: 0;
             border: 2px solid #e5e7eb;
-            border-radius: 0.5rem;
+            border-radius: 1rem;
 
             /* Text matching properties */
             font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -81,15 +81,18 @@
             position: absolute;
             top: -1.75rem;
             left: 0;
-            background-color: #1f2937;
-            color: white;
-            padding: 0.125rem 0.375rem;
-            border-radius: 0.25rem;
+            background-color: rgba(0, 0, 0, 0.65);
+            color: #ffffff;
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.75rem;
             font-size: 0.75rem;
-            font-weight: 700;
+            font-weight: 800;
             line-height: 1.25;
             white-space: nowrap;
             z-index: 10;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
         /* Webkit scrollbar matching */
@@ -124,10 +127,10 @@
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Left: Editor Area -->
             <div class="flex-1 w-full max-w-4xl">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-200">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-lg font-bold text-gray-800">문서 작성</h2>
-                        <span class="text-xs text-blue-500 font-bold bg-blue-50 px-2 py-1 rounded">자동 검사 중</span>
+                        <span class="text-xs text-blue-500 font-bold bg-blue-50 px-3 py-1.5 rounded-full">자동 검사 중</span>
                     </div>
 
                     <div class="editor-container h-[600px]">
@@ -153,13 +156,13 @@
                 <div class="sticky top-8">
                     <!-- Warning Card -->
                     <div id="warning-panel"
-                        class="hidden bg-white px-6 py-8 rounded-2xl shadow-md border-b-4 border-gray-800 transition-all duration-300 transform">
-                        <div class="flex gap-4 items-start">
+                        class="hidden bg-white px-6 py-8 rounded-3xl shadow-md border border-gray-100 border-b-4 border-b-gray-800 transition-all duration-300 transform">
+                        <div class="flex gap-4 items-center">
                             <div id="first-warning-num"
-                                class="bg-gray-800 text-white text-6xl font-black py-2 px-5 min-w-[70px] text-center shadow-inner flex-shrink-0">
+                                class="bg-gray-800 text-white text-6xl font-black w-20 h-24 flex items-center justify-center rounded-2xl shadow flex-shrink-0">
                                 2
                             </div>
-                            <div class="text-2xl font-black text-gray-800 leading-tight tracking-tight pt-1">
+                            <div class="text-2xl font-black text-gray-800 leading-tight tracking-tight">
                                 번째 문단이<br>글자수를 초과해요.
                             </div>
                         </div>
@@ -175,7 +178,7 @@
 
                     <!-- Success Card -->
                     <div id="success-panel"
-                        class="bg-white px-6 py-8 rounded-2xl shadow-sm border border-green-200 transition-all duration-300">
+                        class="bg-white px-6 py-8 rounded-3xl shadow-sm border border-green-200 transition-all duration-300">
                         <div
                             class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-500 mb-4">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -188,7 +191,7 @@
                     </div>
 
                     <!-- Intro Card (Empty state) -->
-                    <div id="intro-panel" class="bg-gray-50 border border-gray-200 px-6 py-8 rounded-2xl hidden">
+                    <div id="intro-panel" class="bg-gray-50 border border-gray-200 px-6 py-8 rounded-3xl hidden">
                         <h3 class="text-lg font-bold text-gray-800 mb-2">어떻게 사용하나요?</h3>
                         <p class="text-sm text-gray-600 leading-relaxed mb-4">
                             여기에 타래로 쓸 긴 글을 편하게 쓰세요. 엔터(줄바꿈)를 기준으로 하나의 트윗이 됩니다.
