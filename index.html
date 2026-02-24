@@ -237,8 +237,8 @@
                                 </svg>
                             </button>
                             <div class="text-xs text-gray-500 font-medium leading-relaxed">
-                                <span class="font-bold text-gray-700">문단 나누기 도구</span><br>가위 버튼을 켠 상태로 글자를 클릭하면, 그 위치에서
-                                문단(트윗)이 나뉩니다.
+                                <span class="font-bold text-gray-700">문단 나누기 도구</span><br>가위 버튼을 누른 채로 글자 사이를 클릭 시, 그
+                                위치에서 문단이 나뉩니다.
                             </div>
                         </div>
 
@@ -254,34 +254,13 @@
                                     </svg>
                                 </div>
                                 <div class="text-xs text-gray-500 font-medium flex-1">
-                                    글을 쓸 때 참고할 이미지를 띄워둘 수 있습니다.<br>(새로고침 시 사라짐)
+                                    배경이 투명한 캐릭터 등 여러 이미지를 화면에 자유롭게 띄울 수 있습니다!<br>(이미지를 끌어서 드래그하거나 우측 하단을 잡아 크기 조절 가능)
                                 </div>
                                 <label for="image-upload"
                                     class="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors shadow flex-shrink-0">
                                     불러오기
                                 </label>
-                                <input type="file" id="image-upload" accept="image/*" class="hidden">
-                            </div>
-
-                            <!-- Preview Container -->
-                            <div id="image-preview-container"
-                                class="hidden relative group rounded-xl overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center min-h-[100px] max-h-[300px]">
-                                <img id="image-preview" src="" alt="참고 이미지" class="object-contain max-h-[300px] w-auto">
-                                <button id="close-image-btn"
-                                    class="absolute top-2 right-2 bg-black/50 hover:bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
-                                <div
-                                    class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/60 rounded-full px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2">
-                                    <button class="text-white hover:text-blue-300 px-1" title="축소"
-                                        onclick="adjustImageSize(-10)">-</button>
-                                    <span class="text-white text-[10px] font-bold" id="image-scale-text">100%</span>
-                                    <button class="text-white hover:text-blue-300 px-1" title="확대"
-                                        onclick="adjustImageSize(10)">+</button>
-                                </div>
+                                <input type="file" id="image-upload" accept="image/*" class="hidden" multiple>
                             </div>
                         </div>
                     </div>
@@ -548,52 +527,97 @@
         });
 
         // -----------------------------------------
-        // 이미지 뷰어 (첨부) 로직
+        // 이미지 자유 띄우기 (스티커/플로팅) 로직
         // -----------------------------------------
         const imageUpload = document.getElementById('image-upload');
-        const imagePreviewContainer = document.getElementById('image-preview-container');
-        const imagePreview = document.getElementById('image-preview');
-        const closeImageBtn = document.getElementById('close-image-btn');
-        const imageScaleText = document.getElementById('image-scale-text');
-
-        let currentScale = 100;
+        let stickerZIndexCounter = 1000;
 
         imageUpload.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
+
+            Array.from(files).forEach((file, idx) => {
                 const reader = new FileReader();
                 reader.onload = function (evt) {
-                    imagePreview.src = evt.target.result;
-                    imagePreviewContainer.classList.remove('hidden');
-                    currentScale = 100;
-                    updateImageScaleUI();
-                }
+                    createFloatingSticker(evt.target.result, 150 + (idx * 30), 100 + (idx * 30));
+                };
                 reader.readAsDataURL(file);
-            }
-            // 같은 파일을 다시 선택할 수 있도록 초기화
-            e.target.value = '';
+            });
+            e.target.value = ''; // 초기화
         });
 
-        closeImageBtn.addEventListener('click', () => {
-            imagePreview.src = '';
-            imagePreviewContainer.classList.add('hidden');
-        });
+        function createFloatingSticker(imgSrc, initialLeft, initialTop) {
+            const container = document.createElement('div');
+            container.className = 'fixed flex flex-col group';
+            container.style.left = initialLeft + 'px';
+            container.style.top = initialTop + 'px';
+            container.style.zIndex = ++stickerZIndexCounter;
 
-        // 전역 함수로 크기 조절 노출
-        window.adjustImageSize = function (amount) {
-            currentScale += amount;
-            // 크기 제한: 20% ~ 200%
-            if (currentScale < 20) currentScale = 20;
-            if (currentScale > 200) currentScale = 200;
+            // 창 크기 조절/보여지는 부분
+            const wrapper = document.createElement('div');
+            wrapper.style.resize = 'both';
+            wrapper.style.overflow = 'hidden';
+            wrapper.style.width = '250px';
+            wrapper.style.minWidth = '80px';
+            wrapper.style.minHeight = '80px';
+            wrapper.className = 'relative border-2 border-transparent group-hover:border-blue-400 group-hover:bg-blue-50/10 rounded-xl transition-colors bg-transparent shadow-none group-hover:shadow-md';
 
-            updateImageScaleUI();
-        };
+            // 이미지
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            // object-fit을 통해 박스 비율에 맞춰 유연하게 변동
+            img.className = 'w-full h-full object-contain pointer-events-none select-none';
 
-        function updateImageScaleUI() {
-            imageScaleText.innerText = currentScale + '%';
-            imagePreview.style.transform = `scale(${currentScale / 100})`;
-            // 스케일 변화 중심점을 중앙으로 유지
-            imagePreview.style.transformOrigin = 'center';
+            // 마우스 드래그를 받는 영역 (우측 하단 resize 부분 간섭 방지를 위해 약간 띄움)
+            const dragArea = document.createElement('div');
+            dragArea.className = 'absolute inset-0 cursor-move';
+            dragArea.style.bottom = '20px'; // 우측 하단 resize 공간 
+            dragArea.style.right = '20px';
+
+            // 닫기 버튼
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            closeBtn.className = 'absolute top-1 right-1 bg-gray-900/60 hover:bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10';
+            closeBtn.title = "삭제하기";
+            closeBtn.onclick = () => container.remove();
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(dragArea);
+            wrapper.appendChild(closeBtn);
+            container.appendChild(wrapper);
+            document.body.appendChild(container);
+
+            // --- 드래그 로직 ---
+            let isDragging = false;
+            let startX, startY, startLeft, startTop;
+
+            const onMouseDown = (e) => {
+                // 클릭하면 다른 스티커보다 가장 위로 올림
+                container.style.zIndex = ++stickerZIndexCounter;
+
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                startLeft = parseInt(container.style.left) || 0;
+                startTop = parseInt(container.style.top) || 0;
+                e.preventDefault(); // 기본 드래그 방지
+            };
+
+            const onMouseMove = (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                container.style.left = (startLeft + dx) + 'px';
+                container.style.top = (startTop + dy) + 'px';
+            };
+
+            const onMouseUp = () => {
+                isDragging = false;
+            };
+
+            dragArea.addEventListener('mousedown', onMouseDown);
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
         }
 
     </script>
